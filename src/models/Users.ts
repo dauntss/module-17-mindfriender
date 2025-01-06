@@ -1,0 +1,45 @@
+import { Schema, model, type Document } from 'mongoose';
+
+interface User extends Document {
+    username: string,
+    email: string,
+    thoughts?: [],
+    friends?: []
+}
+
+const UserSchema = new Schema<User>({
+    username: {
+        type: String,
+        required: true,
+        max_length: 50,
+        trim: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+    },
+    thoughts: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'thoughts',
+        },
+    ],
+    friends: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'user',
+        }
+    ],
+},
+    {
+        toJSON: {
+            getters: true,
+        },
+        timestamps: true
+    }
+);
+
+const User = model('User', UserSchema);
+
+export default User;
